@@ -1,0 +1,6 @@
+Flask
+Flask_SQLAlchemy
+Flask_CORS
+yfinance
+python-dotenv
+requests
