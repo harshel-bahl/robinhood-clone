@@ -67,7 +67,10 @@ const PortfolioPage = () => {
                                 <Cell key={`cell-${index}`} fill={`hsl(${index * 30}, 70%, 50%)`} />
                             ))}
                         </Pie>
-                        <Tooltip formatter={(value) => `$${value}`} />
+                        <Tooltip 
+                            formatter={(value: number) => `$${Math.round(value)}`} 
+                            contentStyle={{ borderRadius: '10px', boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.2)', border: 'none' }} 
+                        />
                     </PieChart>
                 </div>
             )}
