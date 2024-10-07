@@ -18,7 +18,7 @@ const PortfolioPage = () => {
     const { data: portfolioData, error } = useQuery({
         queryKey: ['portfolioData'],
         queryFn: viewPortfolio,
-        refetchInterval: 1000 * 10,
+        refetchInterval: 1000 * 5,
     });
 
     // Memos

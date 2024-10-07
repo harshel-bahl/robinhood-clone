@@ -10,14 +10,16 @@ import { Label } from '../components/shadcn/ui/label';
 import { buyStock, sellStock, viewPortfolio } from '../CRUD/requests';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '../components/hooks/use-toast';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../components/shadcn/ui/dialog';
 
 const Trade = () => {
 
     const [query, setQuery] = useState('');
     const [tickerData, setTickerData] = useState<StockData | null>(null);
     const [isSmallScreen, setIsSmallScreen] = useState(window.matchMedia("(max-width: 768px)").matches);
-    const [quantity, setQuantity] = useState(0);
+    const [quantity, setQuantity] = useState(1);
     const [noTickerFound, setNoTickerFound] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const queryClient = useQueryClient();
     const { toast } = useToast();
@@ -63,9 +65,10 @@ const Trade = () => {
                 const result = await buyStock(tickerData.ticker, quantity);
                 toast({
                     title: 'Transaction Successful',
-                    description: `Buy successful! Total cost: ${result.totalCost}`,
+                    description: `Buy successful! Total cost: ${result.totalCost.toFixed(2)}`,
                 });
                 queryClient.invalidateQueries({ queryKey: ['portfolioData'] });
+                setIsDialogOpen(false);
             } catch (error) {
                 console.error('Error buying stock:', error);
                 toast({
@@ -87,9 +90,10 @@ const Trade = () => {
                 const result = await sellStock(tickerData.ticker, quantity);
                 toast({
                     title: 'Transaction Successful',
-                    description: `Sell successful! Total sold: ${result.totalRevenue}`,
+                    description: `Sell successful! Total sold: ${result.totalRevenue.toFixed(2)}`,
                 });
                 queryClient.invalidateQueries({ queryKey: ['portfolioData'] });
+                setIsDialogOpen(false);
             } catch (error) {
                 console.error('Error selling stock:', error);
                 toast({
@@ -104,11 +108,7 @@ const Trade = () => {
             });
         }
     };
-
-    const handleSellAll = () => {
-        setQuantity(currentQuantity);
-    };
-
+    console.log(quantity);
     return (
         <div className="grow flex flex-col items-center justify-center gap-5">
 
@@ -220,21 +220,37 @@ const Trade = () => {
                                     <CardContent className="space-y-2 flex flex-col items-center gap-5">
                                         <div className="w-full space-y-1">
                                             <Label htmlFor="quantity">Quantity</Label>
-                                            <Input 
-                                            id="quantity" 
-                                            type="number" 
-                                            min="1" 
-                                            max={currentQuantity} 
-                                            onChange={(e) => {
-                                                const value = parseInt(e.target.value, 10);
-                                                setQuantity(isNaN(value) ? 0 : value); 
-                                            }} 
+                                            <Input
+                                                id="quantity"
+                                                type="number"
+                                                min="1"
+                                                max={currentQuantity}
+                                                onChange={(e) => {
+                                                    const value = parseInt(e.target.value, 10);
+                                                    let no = isNaN(value) ? 0 : value
+                                                    setQuantity(no);
+                                                }}
+                                            onFocus={(e) => setQuantity(Number(e.target.value))}
                                             />
                                         </div>
 
                                         <div className='w-full flex justify-between items-center'>
                                             <p className='text-sm'><strong>Current Quantity: {currentQuantity} shares</strong></p>
-                                            <Button onClick={handleSellAll}>Sell All</Button>
+                                            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                                                <DialogTrigger asChild>
+                                                    <Button variant="outline" onClick={() => setQuantity(currentQuantity)}>Sell All</Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-[425px]">
+                                                    <DialogHeader>
+                                                        <DialogTitle>Sell All Your Shares</DialogTitle>
+                                                        <DialogDescription>
+                                                            Are you sure you want to sell all your shares in {tickerData.ticker}?
+                                                        </DialogDescription>
+
+                                                        <Button onClick={handleSell}>Sell All</Button>
+                                                    </DialogHeader>
+                                                </DialogContent>
+                                            </Dialog>
                                         </div>
                                     </CardContent>
                                     <CardFooter className='flex justify-center'>
