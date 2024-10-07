@@ -21,7 +21,7 @@ To get started with the Robinhood Clone, you need to have Python and the depende
 
 ### Steps
 
-1. Clone repository: https://github.com/harshel-bahl/robinhood-clone.git
+1. Clone repository: git clone https://github.com/harshel-bahl/robinhood-clone.git
 2. Navigate to backend directory: cd backend
 3. Install dependencies: pip or pip3 install -r requirements.txt
 4. Run the application: python or python3 app.py
