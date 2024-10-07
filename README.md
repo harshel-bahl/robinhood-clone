@@ -16,7 +16,8 @@ To get started with the Robinhood Clone, you need to have Python and the depende
 
 ### Prerequisites
 
-- Python ^3.11.5
+- Python 3.11.5
+    - Use pyenv to install python 3.11.5 (https://github.com/pyenv/pyenv)
 - pip (Python package manager)
 
 ### Steps
